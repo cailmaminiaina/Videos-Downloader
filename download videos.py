@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, send_file
 import yt_dlp
 import os
 from urllib.parse import unquote
+import logging
 
 app = Flask(__name__)
 
