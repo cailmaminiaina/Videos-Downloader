@@ -24,6 +24,10 @@ def telecharger_video(url):
         'outtmpl': os.path.join(DOWNLOAD_FOLDER, '%(title)s.%(ext)s'),
         'format': 'best',
         'cookies': 'cookies.txt',
+        'extractor_args': {
+            'youtubetab': 'skip=webpage',
+            'youtube': 'player_skip=webpage,configs;visitor_data=CgJNRxIEGgAgXQ%3D%3D'
+        }
     }
     with yt_dlp.YoutubeDL(options) as ydl:
         info_dict = ydl.extract_info(url, download=True)
