@@ -30,8 +30,28 @@ def download():
         return send_file(filepath, as_attachment=True)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+        
+@app.route('/download/<path:url>', methods=['GET'])
+def download_get(url):
+    """
+    Télécharge la vidéo à partir de l'URL passée dans l'URL du serveur.
+    """
+    # Décode l'URL encodée
+    decoded_url = unquote(url)
+    
+    if not decoded_url.startswith("http"):
+        return jsonify({"error": "URL invalide"}), 400
 
-if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+    try:
+        # Téléchargement de la vidéo
+        filename, filepath = telecharger_video(decoded_url)
+        
+        # Renvoie le fichier en tant que téléchargement
+        return send_file(filepath, as_attachment=True)
 
+    except Exception as e:
+        logging.error(f"Erreur dans la fonction 'download_get': {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+if __name__ == "__main__":
+    app.run(debug=True)
