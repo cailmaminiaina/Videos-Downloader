@@ -23,7 +23,7 @@ def telecharger_video(url):
     options = {
         'outtmpl': os.path.join(DOWNLOAD_FOLDER, '%(title)s.%(ext)s'),
         'format': 'best',
-        'cookiesfrombrowser': True
+        'cookiesfrombrowser': ['firefox']
     }
     with yt_dlp.YoutubeDL(options) as ydl:
         info_dict = ydl.extract_info(url, download=True)
