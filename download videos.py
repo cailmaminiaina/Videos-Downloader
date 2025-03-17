@@ -33,8 +33,12 @@ def telecharger_video(url):
 # Route pour télécharger la vidéo via un formulaire POST
 @app.route('/download', methods=['POST'])
 def download():
-    # Récupérer l'URL depuis le formulaire
-    url = request.form.get("url")
+    # Tentative d'obtenir l'URL soit par formulaire, soit par JSON
+    url = request.form.get("url")  # Méthode 1: via le formulaire HTML
+    if not url:
+        data = request.json  # Méthode 2: via JSON
+        url = data.get("url") if data else None
+
     if not url:
         return jsonify({"error": "Aucune URL fournie"}), 400
     
