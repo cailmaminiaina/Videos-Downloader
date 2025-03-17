@@ -1,20 +1,25 @@
-from  flask import Flask, request, jsonify, render_template, send_file
+from flask import Flask, request, jsonify, render_template, send_file
 import yt_dlp
 import os
 
 app = Flask(__name__)
 
+# Crée le dossier de téléchargement s'il n'existe pas déjà
 DOWNLOAD_FOLDER = "videos"
 os.makedirs(DOWNLOAD_FOLDER, exist_ok=True)
 
+# Page d'accueil avec le formulaire
+@app.route('/')
 def index():
     """
     Affiche la page d'accueil avec un formulaire pour entrer l'URL de la vidéo.
     """
     return render_template('index.html')
 
-
 def telecharger_video(url):
+    """
+    Télécharge la vidéo à partir de l'URL fournie et retourne le nom et chemin du fichier.
+    """
     options = {
         'outtmpl': os.path.join(DOWNLOAD_FOLDER, '%(title)s.%(ext)s'),
         'format': 'best'
@@ -25,10 +30,11 @@ def telecharger_video(url):
         filepath = os.path.join(DOWNLOAD_FOLDER, filename)
         return filename, filepath
 
+# Route pour télécharger la vidéo via un formulaire POST
 @app.route('/download', methods=['POST'])
 def download():
-    data = request.json
-    url = data.get("url")
+    # Récupérer l'URL depuis le formulaire
+    url = request.form.get("url")
     if not url:
         return jsonify({"error": "Aucune URL fournie"}), 400
     
