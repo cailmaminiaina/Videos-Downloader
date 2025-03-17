@@ -1,13 +1,18 @@
-from flask import Flask, request, jsonify, send_file
+from  flask import Flask, request, jsonify, render_template, send_file
 import yt_dlp
 import os
-from urllib.parse import unquote
-import logging
 
 app = Flask(__name__)
 
 DOWNLOAD_FOLDER = "videos"
 os.makedirs(DOWNLOAD_FOLDER, exist_ok=True)
+
+def index():
+    """
+    Affiche la page d'accueil avec un formulaire pour entrer l'URL de la vidéo.
+    """
+    return render_template('index.html')
+
 
 def telecharger_video(url):
     options = {
@@ -31,28 +36,6 @@ def download():
         filename, filepath = telecharger_video(url)
         return send_file(filepath, as_attachment=True)
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
-        
-@app.route('/download/<path:url>', methods=['GET'])
-def download_get(url):
-    """
-    Télécharge la vidéo à partir de l'URL passée dans l'URL du serveur.
-    """
-    # Décode l'URL encodée
-    decoded_url = unquote(url)
-    
-    if not decoded_url.startswith("http"):
-        return jsonify({"error": "URL invalide"}), 400
-
-    try:
-        # Téléchargement de la vidéo
-        filename, filepath = telecharger_video(decoded_url)
-        
-        # Renvoie le fichier en tant que téléchargement
-        return send_file(filepath, as_attachment=True)
-
-    except Exception as e:
-        logging.error(f"Erreur dans la fonction 'download_get': {str(e)}")
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
